@@ -57,6 +57,23 @@ app.get("/count-product", (req, res) => {
   });
 });
 
+// Get all products that are low on stock (quantity <= reorder level)
+app.get("/low-stock", (req, res) => {
+  const sql = `
+    SELECT product_id, product_name AS name, quantity, reorder_level 
+    FROM product 
+    WHERE quantity <= reorder_level
+  `;
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching low stock:", err);
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
+
 // get count-customer
 app.get("/count-customer", (req, res) => {
   db.query("SELECT COUNT(*) AS count FROM customer;", (err, results) => {
